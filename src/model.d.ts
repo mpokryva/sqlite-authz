@@ -4,15 +4,75 @@
  */
 
 export interface paths {
-    "/items": {
+    "/query": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Retrieve a list of items */
-        get: {
+        get?: never;
+        put?: never;
+        /** Execute a SQLite query */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        query?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description The results of the query */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated. Missing a valid API key. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthorized to execute the given query */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api_keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create an API key */
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -21,40 +81,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description A list of items */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Item"][];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Create a new item */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description Item to add */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["Item"];
-                };
-            };
-            responses: {
-                /** @description Item created successfully */
+                /** @description A new API key */
                 201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Item"];
+                        "application/json": components["schemas"]["APIKey"];
                     };
                 };
             };
@@ -69,16 +102,9 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Item: {
-            /**
-             * Format: int64
-             * @example 1
-             */
-            id?: number;
-            /** @example Item name */
-            name?: string;
-            /** @example Item description */
-            description?: string;
+        APIKey: string;
+        Error: {
+            message?: string;
         };
     };
     responses: never;

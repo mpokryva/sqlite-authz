@@ -26,6 +26,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "start": "node build/src/index.js",
+    "gen-api": "npx openapi-typescript ./authz-api.yaml -o ./src/model.d.ts",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
