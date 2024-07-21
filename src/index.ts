@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import type {components} from './model';
 
-type Item = components["schemas"]["Item"];
+type APIKey = components["schemas"]["APIKey"]
 
 
 

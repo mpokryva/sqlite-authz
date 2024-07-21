@@ -8,6 +8,12 @@ servers:
     description: Local server
 
 paths:
+  /policies:
+    post:
+      summary: Create an authorization policy for the given API key
+      requestBody:
+        required: true
+        # TODO
   /query:
     post:
       summary: Execute a SQLite query
@@ -40,18 +46,32 @@ paths:
       summary: Create an API key
       responses:
         201:
-          description: A new API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKey'
+          $ref: '#/components/responses/APIKeyResponse'
+
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: APIKey
+  responses:
+    APIKeyResponse:
+      description: A new API key
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              api_key:
+                type: string
+
   schemas:
-    APIKey:
-     type: string
     Error:
       type: object
       properties:
         message:
           type: string
+
+security:
+  - ApiKeyAuth: []
