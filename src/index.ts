@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import type {components} from './model';
+// import type {components} from './model';
 
-type APIKey = components["schemas"]["APIKey"]
+// type APIKey = components["schemas"]["APIKey"]
 
 
 
@@ -53,7 +53,14 @@ app.post("/query", (req: Request, res: Response) => {
   if (!query) {
     res.send({"error": "must provide query"});
   } else {
-    res.send(`Got query: ${query}`);
+    db.all(query, (err, rows) => {
+      if (err) {
+        res.status(400).send(err);
+        return;
+      } else {
+       res.send({data: rows});
+      }
+    });
   }
 });
 
