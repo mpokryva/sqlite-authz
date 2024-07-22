@@ -2,10 +2,11 @@
 import { components } from './model';
 
 type Policy = components['schemas']['Policy'];
+type CreatePolicyRequest =
+  components['requestBodies']['CreatePolicyRequest']['content']['application/json'];
 type Action = components['schemas']['Action'];
-// TODO: Add id to policy for access/removal.
 interface PolicyMap {
-  [principal: string]: [Policy];
+  [principal: string]: Policy[];
 }
 
 export interface AuthzRequest {
@@ -18,11 +19,24 @@ export interface AuthzRequest {
 //  Coupling for time's sake.
 export class PolicyAuthorizer {
   private policies: PolicyMap = {};
+  private idCounter: number = 0;
 
   constructor() {}
 
-  addPolicy(principal: string, policy: Policy) {
+  addPolicy(principal: string, policyReq: CreatePolicyRequest): Policy {
+    const policy: Policy = {
+      id: `policy_${this.idCounter}`,
+      actions: policyReq.actions,
+      resource: policyReq.resource,
+      principal: policyReq.principal,
+      effect: policyReq.effect,
+    };
+    this.idCounter++;
+    if (!this.policies[principal]) {
+      this.policies[principal] = [];
+    }
     this.policies[principal].push(policy);
+    return policy;
   }
 
   authorized(req: AuthzRequest): boolean {
@@ -68,7 +82,9 @@ export class PolicyAuthorizer {
     // Storing actions in a set would be ideal, but OpenAPI generator generates arrays.
     //  not changing for time's sake.
     const actionMatches =
-      policy.actions.length === 0 || policy.actions.includes(req.action);
+      !policy.actions ||
+      policy.actions.length === 0 ||
+      policy.actions.includes(req.action);
     const resourceMatches =
       !policy.resource || req.resource === policy.resource;
     return principalMatches && actionMatches && resourceMatches;

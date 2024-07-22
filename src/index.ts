@@ -1,12 +1,13 @@
-import express, { Request, Response } from 'express';
-import bodyParser from 'body-parser';
+import express, { NextFunction, Request, Response } from 'express';
 import type { components } from './model';
 import basicAuth, { IBasicAuthedRequest } from 'express-basic-auth';
 import { PolicyAuthorizer } from './policyAuthorizer';
 import { AST, Parser } from 'node-sql-parser';
+import * as OpenApiValidator from 'express-openapi-validator';
 const parser = new Parser();
 
-type ErrorResponse = components['schemas']['Error'];
+type ErrorResponse =
+  components['responses']['ErrorResponse']['content']['application/json'];
 type Action = components['schemas']['Action'];
 
 const sqlite3 = require('sqlite3').verbose();
@@ -16,7 +17,7 @@ const authorizer = new PolicyAuthorizer();
 
 // TODO: Clean up (reorganize)
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 const apiKeyAuthMiddleware = basicAuth({
   authorizer: apiKeyAuthorizer,
   unauthorizedResponse: unauthorizedResponse,
@@ -29,6 +30,20 @@ app.use(
     next();
   },
 );
+app.use(
+  OpenApiValidator.middleware({
+    apiSpec: './authz-api.yaml',
+    validateRequests: true, // (default)
+    validateResponses: true, // false by default
+  }),
+);
+app.use((err, _req: Request, res: Response, _next: NextFunction) => {
+  // format error
+  res.status(err.status || 500).json({
+    message: err.message,
+    errors: err.errors,
+  });
+});
 const port = 3000;
 
 function shouldAuthenticate(req: Request): boolean {
@@ -50,7 +65,7 @@ app.post('/api_keys', (_: Request, res: Response) => {
   apiKeys.add(newApiKey);
   // Probably a race condition, but we'll ignore it for the purposes of this assignment.
   apiKeyCounter++;
-  res.send({
+  res.status(201).send({
     key: newApiKey,
   });
 });
@@ -61,14 +76,13 @@ interface TableAndAction {
 }
 
 function tableAndActionFromQuery(query: string): TableAndAction {
-  // The SQL statement to parse
-  // Parse the SQL statement
   const parsed = parser.parse(query); // Convert SQL to AST (Abstract Syntax Tree)
   if (parsed.tableList.length > 1) {
     throw new Error('Multiple table authorization currently not supported');
   }
   // Table may be null if we're creating a user, sequence, w/e.
   const table = parsed.tableList.length === 0 ? parsed.tableList[0] : undefined;
+  console.log(`ast: ${JSON.stringify(parsed.ast)}`);
   return {
     table: table,
     action: resolveActionOrBypass(parsed.ast),
@@ -76,10 +90,10 @@ function tableAndActionFromQuery(query: string): TableAndAction {
 }
 
 function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
-  if (Array.isArray(ast)) {
+  if (Array.isArray(ast) && ast.length > 1) {
     throw new Error('multiple expressions not currently supported');
   }
-  const singleAst = ast as AST;
+  const singleAst = ast as AST; // TODO: is this right?
   switch (singleAst.type) {
     case 'use':
     case 'create':
@@ -101,35 +115,40 @@ function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
 
 // TODO: Make sure exceptions return nice errors.
 
+app.post('/policies', (req: IBasicAuthedRequest, res: Response) => {
+  console.log('Policy body: ', req.body);
+  const createdPolicy = authorizer.addPolicy(req.auth.user, req.body);
+  res.status(201).send(createdPolicy);
+});
+
 app.post('/query', (req: IBasicAuthedRequest, res: Response) => {
   const query = req.body.query;
   if (!query) {
     res.send({ error: 'must provide query' });
     return;
   }
-  // TODO: Enforce
   try {
     const tableAndAction = tableAndActionFromQuery(query);
-    if (tableAndAction.action !== 'bypass') {
-      console.log('Authorizing...');
-      if (
-        authorizer.authorized({
-          principal: req.auth.user,
-          action: tableAndAction.action,
-          resource: tableAndAction.table,
-        })
-      ) {
-        console.log('Authorized!');
-        executeQueryAndSendResponse(query, res);
-      } else {
-        console.log('Not authorized to execute query');
-        const unauthorizedResponse: ErrorResponse = {
-          message: 'Unauthrized to perform query',
-        };
-        res.status(403).send(unauthorizedResponse);
-      }
-    } else {
+    if (tableAndAction.action === 'bypass') {
       console.log('Bypassing authz');
+      executeQueryAndSendResponse(query, res);
+      return;
+    }
+    console.log('Authorizing...');
+    const authorized = authorizer.authorized({
+      principal: req.auth.user,
+      action: tableAndAction.action,
+      resource: tableAndAction.table,
+    });
+    if (authorized) {
+      console.log('Authorized!');
+      executeQueryAndSendResponse(query, res);
+    } else {
+      console.log('Not authorized to execute query');
+      const unauthorizedResponse: ErrorResponse = {
+        message: 'Unauthorized to perform query',
+      };
+      res.status(403).send(unauthorizedResponse);
     }
   } catch (err) {
     // 500 for now
@@ -141,7 +160,13 @@ app.post('/query', (req: IBasicAuthedRequest, res: Response) => {
 function executeQueryAndSendResponse(query: string, res: Response) {
   db.all(query, (err, rows) => {
     if (err) {
-      res.status(400).send(err);
+      // We'll assume it's a 400 for now.
+      const errResponse: ErrorResponse = {
+        message: 'Bad query, maybe?',
+        // @ts-ignore
+        errors: [err],
+      };
+      res.status(400).send(errResponse);
       return;
     } else {
       res.send({ data: rows });

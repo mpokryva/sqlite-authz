@@ -14,7 +14,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/CreatePolicyRequest'
       responses:
-        200:
+        201:
           description: The created policy
           content:
             application/json:
@@ -39,17 +39,11 @@ paths:
               schema:
                 type: object
         401:
-          description: Unauthenticated. Missing a valid API key.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/ErrorResponse'
         403:
-          description: Unauthorized to execute the given query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/ErrorResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
   /api_keys:
     post:
       summary: Create an API key
@@ -87,6 +81,21 @@ components:
                   - allow
                   - deny
   responses:
+    ErrorResponse:
+      description: An error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
     APIKeyResponse:
       description: A new API key
       content:
@@ -126,11 +135,3 @@ components:
           enum:
             - allow
             - deny
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-
-security:
-  - ApiKeyAuth: []
