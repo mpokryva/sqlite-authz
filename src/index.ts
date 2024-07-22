@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-// import type {components} from './model';
+// import type { components } from './model';
+import expressBasicAuth from 'express-basic-auth';
 
-// type APIKey = components["schemas"]["APIKey"]
+// type ErrorResponse = components["schemas"]["Error"];
 
 
 
@@ -22,9 +23,20 @@ db.serialize(() => {
 });
 
 
+// TODO: Clean up (reorganize)
 const app = express();
 app.use(bodyParser.json());
+const apiKeyAuthMiddleware = expressBasicAuth({authorizer: apiKeyAuthorizer});
+app.use((req, res, next) => shouldAuthenticate(req) ? apiKeyAuthMiddleware(req, res, next) : next());
 const port = 3000;
+
+function shouldAuthenticate(req: Request): boolean {
+ return (!(req.path === "/api_keys" && req.method === "POST"));
+}
+
+function apiKeyAuthorizer(user: string, _: string): boolean {
+  return apiKeys.has(user);
+}
 
 app.get('/', (_: Request, res: Response) => {
   db.all("SELECT rowid AS id, info FROM lorem", (_, rows) => {
@@ -63,6 +75,7 @@ app.post("/query", (req: Request, res: Response) => {
     });
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

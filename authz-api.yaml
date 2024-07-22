@@ -53,8 +53,7 @@ components:
   securitySchemes:
     ApiKeyAuth:
       type: http
-      scheme: bearer
-      bearerFormat: APIKey
+      scheme: basic
   responses:
     APIKeyResponse:
       description: A new API key
