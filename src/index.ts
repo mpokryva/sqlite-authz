@@ -81,16 +81,26 @@ interface TableAndAction {
 
 function tableAndActionFromQuery(query: string): TableAndAction {
   const parsed = parser.parse(query); // Convert SQL to AST (Abstract Syntax Tree)
-  if (parsed.tableList.length > 1) {
-    throw new Error('Multiple table authorization currently not supported');
-  }
   // Table may be null if we're creating a user, sequence, w/e.
-  const table = parsed.tableList.length === 0 ? parsed.tableList[0] : undefined;
-  console.log(`ast: ${JSON.stringify(parsed.ast)}`);
+  console.log(`ast: ${JSON.stringify(parsed)}`);
   return {
-    table: table,
+    table: resolveTable(parsed.tableList),
     action: resolveActionOrBypass(parsed.ast),
   };
+}
+
+function resolveTable(tableList: string[]): string | undefined {
+  if (tableList.length > 1) {
+    throw new Error('Multiple table authorization currently not supported');
+  }
+  if (tableList.length === 0) {
+    return undefined;
+  }
+  // The parser parses the action as i.e "insert::null::my_table1"
+  //  not pretending this is robust.
+  const resolvedTable = tableList[0].split("::")[2];
+  console.log(`Resolved table: ${resolvedTable}`)
+  return resolvedTable;
 }
 
 function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
