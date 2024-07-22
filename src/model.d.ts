@@ -149,7 +149,7 @@ export interface components {
     };
   };
   responses: {
-    /** @description An error occured */
+    /** @description An error occurred */
     ErrorResponse: {
       headers: {
         [name: string]: unknown;

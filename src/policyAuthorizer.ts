@@ -1,5 +1,5 @@
 // API for add, delete, list, match
-import { components } from './model';
+import { components } from './model.js';
 
 type Policy = components['schemas']['Policy'];
 type CreatePolicyRequest =

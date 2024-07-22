@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
-import type { components } from './model';
+import type { components } from './model.js';
 import basicAuth, { IBasicAuthedRequest } from 'express-basic-auth';
-import { PolicyAuthorizer } from './policyAuthorizer';
+import { PolicyAuthorizer } from './policyAuthorizer.js';
 import { AST, Parser } from 'node-sql-parser';
 import * as OpenApiValidator from 'express-openapi-validator';
 const parser = new Parser();
