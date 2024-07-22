@@ -152,6 +152,7 @@ app.delete('/policies/:id', (req: IBasicAuthedRequest, res: Response) => {
 
 app.post('/query', (req: IBasicAuthedRequest, res: Response) => {
   const query = req.body.query;
+  console.log(`received query: ${query}`);
   if (!query) {
     res.send({ error: 'must provide query' });
     return;
