@@ -127,6 +127,19 @@ app.get('/policies', (req: IBasicAuthedRequest, res: Response) => {
   res.send(authorizer.listPolicies(req.auth.user));
 });
 
+app.delete('/policies/:id', (req: IBasicAuthedRequest, res: Response) => {
+  const deleted = authorizer.deletePolicy(req.auth.user, req.params.id);
+  if (deleted) {
+    res.status(204).send();
+  } else {
+    console.log("policy not found")
+    const errResponse: ErrorResponse = {
+      message: `Policy with id ${req.params.id} not found`
+    }
+    res.status(404).send(errResponse);
+  }
+});
+
 app.post('/query', (req: IBasicAuthedRequest, res: Response) => {
   const query = req.body.query;
   if (!query) {

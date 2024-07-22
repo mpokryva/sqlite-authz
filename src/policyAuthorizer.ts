@@ -43,6 +43,22 @@ export class PolicyAuthorizer {
     return this.policies[principal] || [];
   }
 
+  deletePolicy(principal: string, policyId: string): boolean {
+    const principalPolicies = this.policies[principal];
+    if (!principalPolicies) {
+      return false;
+    }
+    const policyIndex = principalPolicies.findIndex(policy => policy.id === policyId);
+    if (policyIndex === -1) {
+      return false;
+    }
+    principalPolicies.splice(policyIndex, 1);
+    if (principalPolicies.length === 0) {
+      delete this.policies[principal];
+    }
+    return true;
+  }
+
   authorized(req: AuthzRequest): boolean {
     const principalsPolicies = this.policies[req.principal];
     if (!principalsPolicies) {
