@@ -28,7 +28,10 @@ paths:
       responses:
         200:
           description: The results of the query
-          # TODO: Figure out shape??
+          content:
+            application/json:
+              schema:
+                type: object
         401:
           description: Unauthenticated. Missing a valid API key.
           content:
@@ -47,7 +50,6 @@ paths:
       responses:
         201:
           $ref: '#/components/responses/APIKeyResponse'
-
 
 components:
   securitySchemes:
