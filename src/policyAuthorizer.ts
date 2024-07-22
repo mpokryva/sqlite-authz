@@ -48,7 +48,9 @@ export class PolicyAuthorizer {
     if (!principalPolicies) {
       return false;
     }
-    const policyIndex = principalPolicies.findIndex(policy => policy.id === policyId);
+    const policyIndex = principalPolicies.findIndex(
+      (policy) => policy.id === policyId,
+    );
     if (policyIndex === -1) {
       return false;
     }

@@ -36,7 +36,7 @@ paths:
       summary: Delete an authorization policy
       responses:
         204:
-          description: "Successfully deleted policy"
+          description: 'Successfully deleted policy'
         404:
           $ref: '#/components/responses/ErrorResponse'
   /query:

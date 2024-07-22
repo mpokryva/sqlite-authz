@@ -98,8 +98,8 @@ function resolveTable(tableList: string[]): string | undefined {
   }
   // The parser parses the action as i.e "insert::null::my_table1"
   //  not pretending this is robust.
-  const resolvedTable = tableList[0].split("::")[2];
-  console.log(`Resolved table: ${resolvedTable}`)
+  const resolvedTable = tableList[0].split('::')[2];
+  console.log(`Resolved table: ${resolvedTable}`);
   return resolvedTable;
 }
 
@@ -142,10 +142,10 @@ app.delete('/policies/:id', (req: IBasicAuthedRequest, res: Response) => {
   if (deleted) {
     res.status(204).send();
   } else {
-    console.log("policy not found")
+    console.log('policy not found');
     const errResponse: ErrorResponse = {
-      message: `Policy with id ${req.params.id} not found`
-    }
+      message: `Policy with id ${req.params.id} not found`,
+    };
     res.status(404).send(errResponse);
   }
 });
