@@ -113,12 +113,14 @@ function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
   }
 }
 
-// TODO: Make sure exceptions return nice errors.
-
 app.post('/policies', (req: IBasicAuthedRequest, res: Response) => {
   console.log('Policy body: ', req.body);
   const createdPolicy = authorizer.addPolicy(req.auth.user, req.body);
   res.status(201).send(createdPolicy);
+});
+
+app.get('/policies', (req: IBasicAuthedRequest, res: Response) => {
+  res.send(authorizer.listPolicies(req.auth.user));
 });
 
 app.post('/query', (req: IBasicAuthedRequest, res: Response) => {

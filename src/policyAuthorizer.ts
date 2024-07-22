@@ -39,6 +39,10 @@ export class PolicyAuthorizer {
     return policy;
   }
 
+  listPolicies(principal: string): Policy[] {
+    return this.policies[principal] || [];
+  }
+
   authorized(req: AuthzRequest): boolean {
     const principalsPolicies = this.policies[req.principal];
     if (!principalsPolicies) {

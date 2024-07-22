@@ -11,7 +11,27 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** List authorization policies for the given API key */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The given API key's policies */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Policy'][];
+          };
+        };
+      };
+    };
     put?: never;
     /** Create an authorization policy for the given API key */
     post: {
