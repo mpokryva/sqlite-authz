@@ -13,7 +13,37 @@ paths:
       summary: Create an authorization policy for the given API key
       requestBody:
         required: true
-        # TODO
+        description: TODO
+        content:
+          # TODO: Fill in require/non null etc., description
+          application/json:
+            schema:
+              required:
+               - principal
+               - effect
+              properties:
+                principal:
+                  type: string
+                action:
+                  enum:
+                    - select
+                    - insert
+                    - update
+                    - delete
+                    - ddl
+                resource:
+                  type: string
+                effect:
+                  enum:
+                    - allow
+                    - deny
+      responses:
+        200:
+          description: The created policy
+          content:
+            application/json:
+              schema:
+                type: object # TODO
   /query:
     post:
       summary: Execute a SQLite query
