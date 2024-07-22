@@ -62,7 +62,7 @@ export class PolicyAuthorizer {
     A policy matches iff all the following are true:
       1. req.principal === policy.principal
       2. req.action in (policy.actions) or policy.actions is empty
-      3. req.resource === policy.resource, or policy.resource is empty
+      3. req.resources policy.resource, or policy.resource is empty
      */
     const principalMatches = req.principal === policy.principal;
     // Storing actions in a set would be ideal, but OpenAPI generator generates arrays.

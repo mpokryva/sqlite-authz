@@ -104,7 +104,6 @@ components:
         - insert
         - update
         - delete
-        - ddl
     Policy:
       type: object
       required:

@@ -43,6 +43,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "express-basic-auth": "^1.2.1",
+    "node-sql-parser": "^5.2.0",
     "nodemon": "^3.1.4",
     "sqlite3": "^5.1.7",
     "tslib": "~2.6"

@@ -4,178 +4,178 @@
  */
 
 export interface paths {
-  '/policies': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create an authorization policy for the given API key */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: components['requestBodies']['CreatePolicyRequest'];
-      responses: {
-        /** @description The created policy */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['Policy'];
-          };
+    "/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/query': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Execute a SQLite query */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            query?: string;
-          };
+        get?: never;
+        put?: never;
+        /** Create an authorization policy for the given API key */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: components["requestBodies"]["CreatePolicyRequest"];
+            responses: {
+                /** @description The created policy */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Policy"];
+                    };
+                };
+            };
         };
-      };
-      responses: {
-        /** @description The results of the query */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': Record<string, never>;
-          };
-        };
-        /** @description Unauthenticated. Missing a valid API key. */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['Error'];
-          };
-        };
-        /** @description Unauthorized to execute the given query */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['Error'];
-          };
-        };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api_keys': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/query": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute a SQLite query */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        query?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description The results of the query */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
+                };
+                /** @description Unauthenticated. Missing a valid API key. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthorized to execute the given query */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /** Create an API key */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        201: components['responses']['APIKeyResponse'];
-      };
+    "/api_keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create an API key */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                201: components["responses"]["APIKeyResponse"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /** @enum {unknown} */
-    Action: 'select' | 'insert' | 'update' | 'delete' | 'ddl';
-    Policy: {
-      id: string;
-      principal: string;
-      actions?: components['schemas']['Action'][];
-      resource?: string;
-      /** @enum {unknown} */
-      effect: 'allow' | 'deny';
-    };
-    Error: {
-      message?: string;
-    };
-  };
-  responses: {
-    /** @description A new API key */
-    APIKeyResponse: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        'application/json': {
-          api_key?: string;
+    schemas: {
+        /** @enum {unknown} */
+        Action: "select" | "insert" | "update" | "delete";
+        Policy: {
+            id: string;
+            principal: string;
+            actions?: components["schemas"]["Action"][];
+            resource?: string;
+            /** @enum {unknown} */
+            effect: "allow" | "deny";
         };
-      };
-    };
-  };
-  parameters: never;
-  requestBodies: {
-    /** @description The authorization policy you'd like to create */
-    CreatePolicyRequest: {
-      content: {
-        'application/json': {
-          principal: string;
-          actions?: components['schemas']['Action'][];
-          resource?: string;
-          /** @enum {unknown} */
-          effect: 'allow' | 'deny';
+        Error: {
+            message?: string;
         };
-      };
     };
-  };
-  headers: never;
-  pathItems: never;
+    responses: {
+        /** @description A new API key */
+        APIKeyResponse: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    api_key?: string;
+                };
+            };
+        };
+    };
+    parameters: never;
+    requestBodies: {
+        /** @description The authorization policy you'd like to create */
+        CreatePolicyRequest: {
+            content: {
+                "application/json": {
+                    principal: string;
+                    actions?: components["schemas"]["Action"][];
+                    resource?: string;
+                    /** @enum {unknown} */
+                    effect: "allow" | "deny";
+                };
+            };
+        };
+    };
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
