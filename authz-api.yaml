@@ -12,38 +12,14 @@ paths:
     post:
       summary: Create an authorization policy for the given API key
       requestBody:
-        required: true
-        description: TODO
-        content:
-          # TODO: Fill in require/non null etc., description
-          application/json:
-            schema:
-              required:
-               - principal
-               - effect
-              properties:
-                principal:
-                  type: string
-                action:
-                  enum:
-                    - select
-                    - insert
-                    - update
-                    - delete
-                    - ddl
-                resource:
-                  type: string
-                effect:
-                  enum:
-                    - allow
-                    - deny
+        $ref: '#/components/requestBodies/CreatePolicyRequest'
       responses:
         200:
           description: The created policy
           content:
             application/json:
               schema:
-                type: object # TODO
+                $ref: '#/components/schemas/Policy'
   /query:
     post:
       summary: Execute a SQLite query
@@ -86,6 +62,30 @@ components:
     ApiKeyAuth:
       type: http
       scheme: basic
+  requestBodies:
+    CreatePolicyRequest:
+      description: The authorization policy you'd like to create
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - principal
+              - effect
+            properties:
+              principal:
+                type: string
+              actions:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/Action'
+              resource:
+                type: string
+              effect:
+                enum:
+                  - allow
+                  - deny
   responses:
     APIKeyResponse:
       description: A new API key
@@ -98,6 +98,35 @@ components:
                 type: string
 
   schemas:
+    Action:
+      enum:
+        - select
+        - insert
+        - update
+        - delete
+        - ddl
+    Policy:
+      type: object
+      required:
+        - principal
+        - effect
+        - id
+      properties:
+        id:
+          type: string
+        principal:
+          type: string
+        actions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Action'
+        resource:
+          type: string
+        effect:
+          enum:
+            - allow
+            - deny
     Error:
       type: object
       properties:

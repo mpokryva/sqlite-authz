@@ -21,12 +21,18 @@ export interface paths {
         path?: never;
         cookie?: never;
       };
-      requestBody: {
-        content: {
-          '*/*'?: never;
+      requestBody?: components['requestBodies']['CreatePolicyRequest'];
+      responses: {
+        /** @description The created policy */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Policy'];
+          };
         };
       };
-      responses: never;
     };
     delete?: never;
     options?: never;
@@ -126,6 +132,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** @enum {unknown} */
+    Action: 'select' | 'insert' | 'update' | 'delete' | 'ddl';
+    Policy: {
+      id: string;
+      principal: string;
+      actions?: components['schemas']['Action'][];
+      resource?: string;
+      /** @enum {unknown} */
+      effect: 'allow' | 'deny';
+    };
     Error: {
       message?: string;
     };
@@ -144,7 +160,20 @@ export interface components {
     };
   };
   parameters: never;
-  requestBodies: never;
+  requestBodies: {
+    /** @description The authorization policy you'd like to create */
+    CreatePolicyRequest: {
+      content: {
+        'application/json': {
+          principal: string;
+          actions?: components['schemas']['Action'][];
+          resource?: string;
+          /** @enum {unknown} */
+          effect: 'allow' | 'deny';
+        };
+      };
+    };
+  };
   headers: never;
   pathItems: never;
 }
