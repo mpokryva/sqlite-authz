@@ -1,5 +1,5 @@
 // API for add, delete, list, match
-import { components } from './model.js';
+import { components } from './model';
 
 type Policy = components['schemas']['Policy'];
 type CreatePolicyRequest =
@@ -28,7 +28,7 @@ export class PolicyAuthorizer {
       id: `policy_${this.idCounter}`,
       actions: policyReq.actions,
       resource: policyReq.resource,
-      principal: policyReq.principal,
+      principal: principal,
       effect: policyReq.effect,
     };
     this.idCounter++;

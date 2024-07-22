@@ -75,11 +75,8 @@ components:
           schema:
             type: object
             required:
-              - principal
               - effect
             properties:
-              principal:
-                type: string
               actions:
                 type: array
                 uniqueItems: true

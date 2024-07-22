@@ -1,5 +1,5 @@
-import { PolicyAuthorizer, AuthzRequest } from '../src/policyAuthorizer.js';
-import { components } from '../src/model.js';
+import { PolicyAuthorizer, AuthzRequest } from '../src/policyAuthorizer';
+import { components } from '../src/model';
 
 type CreatePolicyRequest =
   components['requestBodies']['CreatePolicyRequest']['content']['application/json'];
@@ -16,7 +16,6 @@ describe('PolicyAuthorizer', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -47,7 +46,6 @@ describe('PolicyAuthorizer', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'deny',
     };
 
@@ -66,7 +64,6 @@ describe('PolicyAuthorizer', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -85,14 +82,12 @@ describe('PolicyAuthorizer', () => {
     const denyPolicyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'deny',
     };
 
     const allowPolicyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -112,7 +107,6 @@ describe('PolicyAuthorizer', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -139,7 +133,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: [],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -161,7 +154,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: [],
       resource: 'resource1',
-      principal: 'user1',
       effect: 'deny',
     };
 
@@ -183,7 +175,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: '',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -205,7 +196,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
       resource: '',
-      principal: 'user1',
       effect: 'deny',
     };
 
@@ -227,7 +217,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: [],
       resource: '',
-      principal: 'user1',
       effect: 'allow',
     };
 
@@ -252,7 +241,6 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     const policyReq: CreatePolicyRequest = {
       actions: [],
       resource: '',
-      principal: 'user1',
       effect: 'deny',
     };
 

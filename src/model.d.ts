@@ -179,7 +179,6 @@ export interface components {
     CreatePolicyRequest: {
       content: {
         'application/json': {
-          principal: string;
           actions?: components['schemas']['Action'][];
           resource?: string;
           /** @enum {unknown} */

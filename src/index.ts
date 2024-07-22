@@ -1,17 +1,20 @@
 import express, { NextFunction, Request, Response } from 'express';
-import type { components } from './model.js';
+import type { components } from './model';
 import basicAuth, { IBasicAuthedRequest } from 'express-basic-auth';
-import { PolicyAuthorizer } from './policyAuthorizer.js';
+import { PolicyAuthorizer } from './policyAuthorizer';
 import { AST, Parser } from 'node-sql-parser';
 import * as OpenApiValidator from 'express-openapi-validator';
 const parser = new Parser();
+import sqlite3 from 'sqlite3';
 
 type ErrorResponse =
   components['responses']['ErrorResponse']['content']['application/json'];
+type APIKeyResponse =
+  components['responses']['APIKeyResponse']['content']['application/json'];
 type Action = components['schemas']['Action'];
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:');
+const sqlite = sqlite3.verbose();
+const db = new sqlite.Database(':memory:');
 
 const authorizer = new PolicyAuthorizer();
 
@@ -58,16 +61,17 @@ function apiKeyAuthorizer(user: string, _: string): boolean {
   return apiKeys.has(user);
 }
 
-const apiKeys = new Set<String>();
+const apiKeys = new Set<string>();
 let apiKeyCounter = 0;
 app.post('/api_keys', (_: Request, res: Response) => {
-  let newApiKey = `api_key_${apiKeyCounter}`;
+  const newApiKey = `api_key_${apiKeyCounter}`;
   apiKeys.add(newApiKey);
   // Probably a race condition, but we'll ignore it for the purposes of this assignment.
   apiKeyCounter++;
-  res.status(201).send({
-    key: newApiKey,
-  });
+  const apiKeyResponse: APIKeyResponse = {
+    api_key: newApiKey,
+  };
+  res.status(201).send(apiKeyResponse);
 });
 
 interface TableAndAction {
@@ -159,7 +163,7 @@ app.post('/query', (req: IBasicAuthedRequest, res: Response) => {
   }
 });
 
-function executeQueryAndSendResponse(query: string, res: Response) {
+function executeQueryAndSendResponse(query: string, res: Response): void {
   db.all(query, (err, rows) => {
     if (err) {
       // We'll assume it's a 400 for now.
