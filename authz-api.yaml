@@ -94,8 +94,8 @@ components:
             properties:
               actions:
                 description: |
-                  The set of actions the policy should be evaluated for.
-                  Leave out if you want to match all.
+                  The set of actions the policy should be evaluated against.
+                  Leave out if you want to match all actions.
                   An explicit empty array will match nothing.
                 type: array
                 uniqueItems: true
@@ -104,9 +104,9 @@ components:
               resource:
                 type: string
                 description: |
-                  The resource the policy should be evaluated for.
+                  The resource the policy should be evaluated against.
                   Leave out if you want to match all resources.
-                  An empty string will only match a resource without a name.
+                  An empty string will only match a resource without a name (so, probably nothing).
               effect:
                 enum:
                   - allow
