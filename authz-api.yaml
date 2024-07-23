@@ -32,6 +32,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Policy'
   /policies/{id}:
+    parameters:
+      - in: path
+        name: id
+        description: The policy ID
+        schema:
+          type: integer
+        required: true
     delete:
       summary: Delete an authorization policy
       responses:
