@@ -18,7 +18,6 @@ const db = new sqlite.Database(':memory:');
 
 const authorizer = new PolicyAuthorizer();
 
-// TODO: Clean up (reorganize)
 const app = express();
 app.use(express.json());
 const apiKeyAuthMiddleware = basicAuth({
@@ -47,7 +46,6 @@ app.use((err, _req: Request, res: Response, _next: NextFunction) => {
     errors: err.errors,
   });
 });
-const port = 3000;
 
 function shouldAuthenticate(req: Request): boolean {
   return !(req.path === '/api_keys' && req.method === 'POST');
@@ -105,6 +103,8 @@ function resolveTable(tableList: string[]): string | undefined {
   return resolvedTable;
 }
 
+// This resolves the action from the AST, bypassing if it's a DDL,
+// since DDLs aren't supported for now.
 function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
   const astArray: AST[] = Array.isArray(ast) ? ast : [ast];
   if (astArray.length > 1) {
@@ -207,6 +207,7 @@ function executeQueryAndSendResponse(query: string, res: Response): void {
   });
 }
 
+const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
