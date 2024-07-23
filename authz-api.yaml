@@ -84,7 +84,9 @@ components:
       scheme: basic
   requestBodies:
     CreatePolicyRequest:
-      description: The authorization policy you'd like to create
+      description: |
+        The authorization policy you'd like to create.
+        This authorization implementation is "allow-nothing", meaning that nothing is allowed until a matching allow policy is defined. A 'deny' always overrides any number of 'allow's, allowing you to "poke holes" in broad authz policies (i.e. "allow delete from all tables, except 'very_important_table'").
       content:
         application/json:
           schema:
@@ -105,9 +107,12 @@ components:
                 type: string
                 description: |
                   The resource the policy should be evaluated against.
+                  For now, this is tables only.
                   Leave out if you want to match all resources.
                   An empty string will only match a resource without a name (so, probably nothing).
               effect:
+                description: |
+                  The authorization effect the policy should have if matched.
                 enum:
                   - allow
                   - deny
