@@ -31,13 +31,13 @@ I tried to design the authz API in a way that:
 2. Prioritizes security if mistakes are made
 3. Allows future complexity to be added incrementally
 
-The allow-nothing design (refer to the API spec) ensures that users aren't permitted to perform actions unless they're explicitly granted authorization. This makes it harder to create security holes, and the deny policies allow easy "patching" if need be.
+The allow-nothing design (refer to the API spec) ensures that users aren't permitted to perform actions unless they're explicitly granted authorization. This makes it harder to create security holes, and the deny policies allow easy "patching" if needed.
 
-The design is flexible enough for simple cases like allowing access to all tables, or select to a single table, but allows more complicated policies like "update to everything except table1, delete to table2, and select on all tables".
+The design is flexible enough for simple cases like allowing access to all tables, or select to a single table, but allows more complicated policies like _"allow update to everything except table1, delete to table2, and select on all tables"._
 
 With this design, one can imagine column-level access would be relatively straightforward: just add another `columns` parameter to the policy definition.
 
-A place where I should've simplified more is in naming of "resource" (which is this design == "table"). I was originally planning to support DDLs, and considered other resources (i.e. constraints, sequences), but this became too hairy and abstract. Ideally, I would've renamed "resource" to "table", and probably moved `/policies` to `/policies/tables` (or something like that) I but didn't want to do a big find-replace, and wanted to actually document this thought process.
+A place where I should've simplified more is in naming of "resource" (which in this design == "table"). I was originally planning to support DDLs and considered other resources (i.e. constraints, sequences), but this became too hairy and abstract. Ideally, I would've renamed "resource" to "table", and probably moved `/policies` to `/policies/tables` (or something like that) I but didn't want to do a big find-replace, and wanted to actually document this failing in my thought process.
 
 ### System design tradeoffs
 
@@ -47,11 +47,11 @@ The resulting implementation is relatively simple, flexible, and easy to use —
 
 Some deeper integration with a DB (via system catalog in the case of PG, for example) would allow for this at the expense of coupling implementation to a database. I think in the future this would be a reasonable tradeoff to make.
 
-Also, for simplicity, policies are stored in memory. In a production system, policies would probably be stored (indexed properly) in SQL database — this would make querying easier and more efficient, and would ensure relational integrity once you start to integrate deeper with a database's system catalogs.
+Also, for simplicity, policies are stored in memory. In a production system, policies would probably be stored (indexed properly) in SQL database — this would make querying easier and more efficient, and would ensure relational integrity once you start to integrate more deeply with a database's system catalogs.
 
 ### Deployed setup
 
-Deploying this would be relatively straightforward — an API server as a sidecar. Policies would be stored in the database they're operating on — this makes for a simpler implementation, and one that allows for a realistic deeper integration that most DB permissioning systems have. There would still be round trip time for authorizing (could be optimized by caching, indexes, etc.), but this is a tradeoff for a simpler, less coupled (and more realistic for this assignment) implementation.
+Deploying this would be relatively straightforward — an API server as a sidecar. Policies would be stored in the database they're operating on, making for a simpler implementation, and one that allows for a realistic deeper integration that most DB permissioning systems have. There would still be round trip time for authorizing (could be optimized by caching, indexes, etc.), but this is a tradeoff for a simpler, less coupled (and more realistic for this assignment) implementation.
 
 ### Tools used
 
