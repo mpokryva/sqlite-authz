@@ -111,6 +111,27 @@ components:
                 enum:
                   - allow
                   - deny
+            example:
+              allow_select:
+                summary: Allow select on a specific resource
+                value:
+                  actions: ['select']
+                  resource: 'my_table'
+                  effect: 'allow'
+              deny_all:
+                summary: Deny all actions on a specific resource
+                value:
+                  resource: 'my_table'
+                  effect: 'deny'
+              allow_all:
+                summary: Allow all actions on all resources
+                value:
+                  effect: 'allow'
+              allow_insert_all:
+                summary: Allow insert on all resources
+                value:
+                  actions: ['insert']
+                  effect: 'allow'
   responses:
     ErrorResponse:
       description: An error occurred
