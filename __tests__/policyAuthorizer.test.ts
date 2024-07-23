@@ -129,9 +129,29 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     authorizer = new PolicyAuthorizer();
   });
 
-  test('should allow all actions if allow policy with empty actions', () => {
+  test('should deny all actions if allow policy with empty actions', () => {
     const policyReq: CreatePolicyRequest = {
       actions: [],
+      resource: 'resource1',
+      effect: 'allow',
+    };
+
+    authorizer.addPolicy('user1', policyReq);
+
+    const actions: Action[] = ['select', 'update', 'delete'];
+
+    actions.forEach((action) => {
+      const req: AuthzRequest = {
+        principal: 'user1',
+        action: action,
+        resource: 'resource1',
+      };
+      expect(authorizer.authorized(req)).toBe(false);
+    });
+  });
+
+  test('should allow all actions if allow policy with no actions', () => {
+    const policyReq: CreatePolicyRequest = {
       resource: 'resource1',
       effect: 'allow',
     };
@@ -150,9 +170,34 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     });
   });
 
-  test('should deny all actions if deny policy with empty actions', () => {
-    const policyReq: CreatePolicyRequest = {
+  test('should allow all actions if deny policy with empty actions', () => {
+    const denyPolicyReq: CreatePolicyRequest = {
       actions: [],
+      resource: 'resource1',
+      effect: 'deny',
+    };
+    const allowPolicyReq: CreatePolicyRequest = {
+      resource: 'resource1',
+      effect: 'allow',
+    };
+
+    authorizer.addPolicy('user1', denyPolicyReq);
+    authorizer.addPolicy('user1', allowPolicyReq);
+
+    const actions: Action[] = ['select', 'update', 'delete'];
+
+    actions.forEach((action) => {
+      const req: AuthzRequest = {
+        principal: 'user1',
+        action,
+        resource: 'resource1',
+      };
+      expect(authorizer.authorized(req)).toBe(true);
+    });
+  });
+
+  test('should deny all actions if deny policy with no actions', () => {
+    const policyReq: CreatePolicyRequest = {
       resource: 'resource1',
       effect: 'deny',
     };
@@ -171,10 +216,9 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     });
   });
 
-  test('should allow access to all resources if allow policy with empty resource', () => {
+  test('should allow access to all resources if allow policy with no resource', () => {
     const policyReq: CreatePolicyRequest = {
       actions: ['select'],
-      resource: '',
       effect: 'allow',
     };
 
@@ -213,10 +257,8 @@ describe('PolicyAuthorizer - Empty Actions or Resources', () => {
     });
   });
 
-  test('should allow all actions on all resources if allow policy with empty actions and resource', () => {
+  test('should allow all actions on all resources if allow policy with no actions and resource', () => {
     const policyReq: CreatePolicyRequest = {
-      actions: [],
-      resource: '',
       effect: 'allow',
     };
 

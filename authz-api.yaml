@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Simple API
-  description: A simple API to demonstrate OpenAPI specification
+  title: Authz API
+  description: A simple authz API
   version: 1.0.0
 servers:
   - url: http://localhost:3000
@@ -86,12 +86,20 @@ components:
               - effect
             properties:
               actions:
+                description: |
+                  The set of actions the policy should be evaluated for.
+                  Leave out if you want to match all.
+                  An explicit empty array will match nothing.
                 type: array
                 uniqueItems: true
                 items:
                   $ref: '#/components/schemas/Action'
               resource:
                 type: string
+                description: |
+                  The resource the policy should be evaluated for.
+                  Leave out if you want to match all resources.
+                  An empty string will only match a resource without a name.
               effect:
                 enum:
                   - allow

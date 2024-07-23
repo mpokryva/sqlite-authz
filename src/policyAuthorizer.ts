@@ -104,11 +104,9 @@ export class PolicyAuthorizer {
     // Storing actions in a set would be ideal, but OpenAPI generator generates arrays.
     //  not changing for time's sake.
     const actionMatches =
-      !policy.actions ||
-      policy.actions.length === 0 ||
-      policy.actions.includes(req.action);
+      policy.actions === undefined || policy.actions.includes(req.action);
     const resourceMatches =
-      !policy.resource || req.resource === policy.resource;
+      policy.resource === undefined || req.resource === policy.resource;
     return principalMatches && actionMatches && resourceMatches;
   }
 }

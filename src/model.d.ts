@@ -60,6 +60,41 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/policies/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete an authorization policy */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Successfully deleted policy */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        404: components['responses']['ErrorResponse'];
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/query': {
     parameters: {
       query?: never;
@@ -179,6 +214,8 @@ export interface components {
     CreatePolicyRequest: {
       content: {
         'application/json': {
+          /** @description The set of actions the policy should be evaluated against.
+           *      */
           actions?: components['schemas']['Action'][];
           resource?: string;
           /** @enum {unknown} */

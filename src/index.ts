@@ -83,9 +83,11 @@ function tableAndActionFromQuery(query: string): TableAndAction {
   const parsed = parser.parse(query); // Convert SQL to AST (Abstract Syntax Tree)
   // Table may be null if we're creating a user, sequence, w/e.
   console.log(`ast: ${JSON.stringify(parsed)}`);
+  const action = resolveActionOrBypass(parsed.ast);
+  console.log(`action resolved to: ${action}`);
   return {
     table: resolveTable(parsed.tableList),
-    action: resolveActionOrBypass(parsed.ast),
+    action: action,
   };
 }
 
@@ -104,10 +106,11 @@ function resolveTable(tableList: string[]): string | undefined {
 }
 
 function resolveActionOrBypass(ast: AST | AST[]): Action | 'bypass' {
-  if (Array.isArray(ast) && ast.length > 1) {
+  const astArray: AST[] = Array.isArray(ast) ? ast : [ast];
+  if (astArray.length > 1) {
     throw new Error('multiple expressions not currently supported');
   }
-  const singleAst = ast as AST; // TODO: is this right?
+  const singleAst = astArray[0];
   switch (singleAst.type) {
     case 'use':
     case 'create':
